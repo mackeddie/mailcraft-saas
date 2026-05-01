@@ -27,45 +27,45 @@
 - [x] Integrate with tRPC procedures to fetch dashboard data
 
 ## Frontend - Campaigns
-- [ ] Build campaigns list page with table view
-- [ ] Implement status badges (draft, scheduled, sent)
-- [ ] Add campaign creation form modal
+- [x] Build campaigns list page with table view
+- [x] Implement status badges (draft, scheduled, sent)
+- [x] Add campaign creation form modal
 - [ ] Add campaign edit functionality
-- [ ] Add campaign delete functionality
+- [x] Add campaign delete functionality
 - [ ] Add campaign schedule functionality with date/time picker
-- [ ] Add campaign send functionality
+- [x] Add campaign send functionality
 - [ ] Implement search and filtering
 
 ## Frontend - Subscribers
-- [ ] Build subscribers list page with table view
-- [ ] Implement subscriber creation form
+- [x] Build subscribers list page with table view
+- [x] Implement subscriber creation form
 - [ ] Implement subscriber edit functionality
-- [ ] Implement subscriber delete functionality
+- [x] Implement subscriber delete functionality
 - [ ] Add bulk import functionality
-- [ ] Implement search and filtering
+- [x] Implement search and filtering
 
 ## Frontend - Segments
-- [ ] Build segments list page with table view
-- [ ] Implement segment creation with filter rules
+- [x] Build segments list page with table view
+- [x] Implement segment creation with filter rules
 - [ ] Implement segment edit functionality
-- [ ] Implement segment delete functionality
+- [x] Implement segment delete functionality
 - [ ] Add segment preview (show matching subscribers)
 
 ## Frontend - Email Builder
-- [ ] Build email builder page layout with editor and preview panels
-- [ ] Implement drag-and-drop interface for adding blocks
-- [ ] Create block types: Text, Image, Button, Divider
-- [ ] Implement text block editing
-- [ ] Implement image block with URL input
-- [ ] Implement button block with link and text
-- [ ] Implement divider block
-- [ ] Build live preview panel
-- [ ] Add block deletion and reordering
+- [x] Build email builder page layout with editor and preview panels
+- [x] Implement drag-and-drop interface for adding blocks
+- [x] Create block types: Text, Image, Button, Divider
+- [x] Implement text block editing
+- [x] Implement image block with URL input
+- [x] Implement button block with link and text
+- [x] Implement divider block
+- [x] Build live preview panel
+- [x] Add block deletion and reordering
 - [ ] Add email template save functionality
 
 ## Frontend - Templates Library
-- [ ] Build templates library page
-- [ ] Create template card components
+- [x] Build templates library page
+- [x] Create template card components
 - [ ] Implement template preview modal
 - [ ] Add template selection for campaigns
 - [ ] Add template creation from email builder

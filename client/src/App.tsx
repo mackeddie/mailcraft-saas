@@ -6,6 +6,11 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import Campaigns from "./pages/Campaigns";
+import Subscribers from "./pages/Subscribers";
+import Segments from "./pages/Segments";
+import Templates from "./pages/Templates";
+import EmailBuilder from "./pages/EmailBuilder";
 import { MailCraftDashboardLayout } from "./components/MailCraftDashboardLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -22,10 +27,11 @@ function Router() {
       <MailCraftDashboardLayout>
         <Switch>
           <Route path="/dashboard" component={Dashboard} />
-          <Route path="/campaigns" component={() => <div>Campaigns Page</div>} />
-          <Route path="/subscribers" component={() => <div>Subscribers Page</div>} />
-          <Route path="/segments" component={() => <div>Segments Page</div>} />
-          <Route path="/templates" component={() => <div>Templates Page</div>} />
+          <Route path="/campaigns" component={Campaigns} />
+          <Route path="/subscribers" component={Subscribers} />
+          <Route path="/segments" component={Segments} />
+          <Route path="/templates" component={Templates} />
+          <Route path="/email-builder" component={EmailBuilder} />
           <Route path="/settings" component={() => <div>Settings Page</div>} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />

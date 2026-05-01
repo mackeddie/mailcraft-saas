@@ -16,6 +16,7 @@ export function MailCraftDashboardLayout({ children }: MailCraftDashboardLayoutP
   const navigationItems = [
     { label: "Dashboard", icon: BarChart3, path: "/dashboard" },
     { label: "Campaigns", icon: Mail, path: "/campaigns" },
+    { label: "Email Builder", icon: Mail, path: "/email-builder" },
     { label: "Subscribers", icon: Users, path: "/subscribers" },
     { label: "Segments", icon: Zap, path: "/segments" },
     { label: "Templates", icon: BookOpen, path: "/templates" },
