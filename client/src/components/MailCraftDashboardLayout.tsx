@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useLocation, useRoute } from "wouter";
-import { Menu, X, LogOut, Settings, BarChart3, Mail, Users, Zap, BookOpen } from "lucide-react";
+import { Menu, X, LogOut, Settings, BarChart3, Mail, Users, Zap, BookOpen, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 interface MailCraftDashboardLayoutProps {
@@ -17,6 +17,7 @@ export function MailCraftDashboardLayout({ children }: MailCraftDashboardLayoutP
     { label: "Dashboard", icon: BarChart3, path: "/dashboard" },
     { label: "Campaigns", icon: Mail, path: "/campaigns" },
     { label: "Email Builder", icon: Mail, path: "/email-builder" },
+    { label: "Copy Generator", icon: Sparkles, path: "/copy-generator" },
     { label: "Subscribers", icon: Users, path: "/subscribers" },
     { label: "Segments", icon: Zap, path: "/segments" },
     { label: "Templates", icon: BookOpen, path: "/templates" },

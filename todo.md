@@ -71,11 +71,11 @@
 - [ ] Add template creation from email builder
 
 ## Frontend - LLM Integration
-- [ ] Build subject line generation form
-- [ ] Build body copy generation form
-- [ ] Integrate LLM procedures with UI
-- [ ] Add loading states for generation
-- [ ] Add error handling for LLM calls
+- [x] Build subject line generation form
+- [x] Build body copy generation form
+- [x] Integrate LLM procedures with UI
+- [x] Add loading states for generation
+- [x] Add error handling for LLM calls
 
 ## Frontend - Notifications
 - [ ] Implement owner notification display
