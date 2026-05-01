@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, campaigns, subscribers, segments, emailTemplates, emailAnalytics } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,65 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Campaign queries
+export async function getCampaignsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(campaigns).where(eq(campaigns.userId, userId));
+}
+
+export async function getCampaignById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(campaigns).where(eq(campaigns.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// Subscriber queries
+export async function getSubscribersByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(subscribers).where(eq(subscribers.userId, userId));
+}
+
+export async function getSubscriberById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(subscribers).where(eq(subscribers.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// Segment queries
+export async function getSegmentsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(segments).where(eq(segments.userId, userId));
+}
+
+export async function getSegmentById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(segments).where(eq(segments.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// Template queries
+export async function getTemplatesByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(emailTemplates).where(eq(emailTemplates.userId, userId));
+}
+
+export async function getTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(emailTemplates).where(eq(emailTemplates.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// Analytics queries
+export async function getAnalyticsByCampaignId(campaignId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(emailAnalytics).where(eq(emailAnalytics.campaignId, campaignId));
+}
