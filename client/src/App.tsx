@@ -12,6 +12,7 @@ import Segments from "./pages/Segments";
 import Templates from "./pages/Templates";
 import EmailBuilder from "./pages/EmailBuilder";
 import CopyGenerator from "./pages/CopyGenerator";
+import Settings from "./pages/Settings";
 import { MailCraftDashboardLayout } from "./components/MailCraftDashboardLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -34,7 +35,7 @@ function Router() {
           <Route path="/templates" component={Templates} />
           <Route path="/email-builder" component={EmailBuilder} />
           <Route path="/copy-generator" component={CopyGenerator} />
-          <Route path="/settings" component={() => <div>Settings Page</div>} />
+          <Route path="/settings" component={Settings} />
           <Route path="/404" component={NotFound} />
           <Route component={NotFound} />
         </Switch>
