@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, Copy, Eye, Code } from "lucide-react";
 import { toast } from "sonner";
+import { ImageUploadBlock } from "@/components/ImageUploadBlock";
+import { AITemplateGenerator } from "@/components/AITemplateGenerator";
 
 interface EmailBlock {
   id: string;
@@ -116,10 +118,29 @@ export default function EmailBuilder() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar - Block Tools */}
+        {/* Sidebar - Block Tools & AI */}
         {!previewMode && (
-          <Card className="p-6 border-border bg-card h-fit lg:col-span-1">
-            <h3 className="font-semibold text-foreground mb-4">Add Blocks</h3>
+          <Card className="p-6 border-border bg-card h-fit lg:col-span-1 space-y-6 overflow-y-auto max-h-[80vh]">
+            <AITemplateGenerator
+              onTemplateGenerated={(template) => {
+                setSubject(template.subject);
+                setBlocks([
+                  {
+                    id: Date.now().toString(),
+                    type: "text",
+                    content: template.body,
+                  },
+                  {
+                    id: (Date.now() + 1).toString(),
+                    type: "button",
+                    content: template.ctaText,
+                  },
+                ]);
+                toast.success("Template loaded!");
+              }}
+            />
+            <div className="border-t border-border pt-4">
+              <h3 className="font-semibold text-foreground mb-4">Add Blocks</h3>
             <div className="space-y-2">
               <Button
                 onClick={() => addBlock("text")}
@@ -153,6 +174,7 @@ export default function EmailBuilder() {
                 <Plus size={16} />
                 Divider
               </Button>
+            </div>
             </div>
           </Card>
         )}

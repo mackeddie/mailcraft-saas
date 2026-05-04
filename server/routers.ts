@@ -523,6 +523,119 @@ export const appRouter = router({
 
         return { bodyCopy };
       }),
+
+    generateTemplate: protectedProcedure
+      .input(z.object({
+        industry: z.string(),
+        purpose: z.string(),
+        tone: z.enum(["professional", "casual", "friendly", "urgent"]),
+        targetAudience: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert email template designer. Generate complete, professional email templates with subject line and body copy.",
+            },
+            {
+              role: "user",
+              content: `Create a complete email template with the following specifications:
+
+Industry: ${input.industry}
+Purpose: ${input.purpose}
+Tone: ${input.tone}
+Target Audience: ${input.targetAudience}
+
+Provide:
+1. Subject Line
+2. Email Body (HTML-friendly format)
+3. Call-to-Action Button Text
+
+Format your response as JSON with keys: subject, body, ctaText`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "email_template",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  subject: { type: "string", description: "Email subject line" },
+                  body: { type: "string", description: "Email body content" },
+                  ctaText: { type: "string", description: "Call-to-action button text" },
+                },
+                required: ["subject", "body", "ctaText"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const messageContent = response.choices[0]?.message.content;
+        let templateData = { subject: "", body: "", ctaText: "" };
+        
+        if (typeof messageContent === "string") {
+          try {
+            templateData = JSON.parse(messageContent);
+          } catch (e) {
+            templateData = { subject: "Generated Email", body: messageContent, ctaText: "Learn More" };
+          }
+        }
+
+        return templateData;
+      }),
+  }),
+
+  // AI Assistance router
+  ai: router({
+    suggestCampaignName: protectedProcedure
+      .input(z.object({ topic: z.string() }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a creative marketing expert. Generate 3 catchy, professional email campaign names.",
+            },
+            {
+              role: "user",
+              content: `Generate 3 creative email campaign names for: ${input.topic}. Provide just the names, one per line.`,
+            },
+          ],
+        });
+
+        const messageContent = response.choices[0]?.message.content;
+        const names = typeof messageContent === "string" 
+          ? messageContent.split("\n").filter(n => n.trim()).slice(0, 3)
+          : ["Campaign 1", "Campaign 2", "Campaign 3"];
+
+        return { suggestions: names };
+      }),
+
+    suggestDescription: protectedProcedure
+      .input(z.object({ campaignName: z.string(), topic: z.string() }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a marketing copywriter. Generate a brief, compelling campaign description.",
+            },
+            {
+              role: "user",
+              content: `Generate a brief campaign description (1-2 sentences) for:\n\nCampaign: ${input.campaignName}\nTopic: ${input.topic}`,
+            },
+          ],
+        });
+
+        const messageContent = response.choices[0]?.message.content;
+        const description = typeof messageContent === "string" ? messageContent : "Campaign description";
+
+        return { description };
+      }),
   }),
 });
 

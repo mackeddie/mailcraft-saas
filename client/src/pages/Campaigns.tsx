@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Plus, Edit2, Trash2, Send, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { AICampaignAssistant } from "@/components/AICampaignAssistant";
 
 export default function Campaigns() {
   const { data: campaigns, isLoading, refetch } = trpc.campaigns.list.useQuery();
@@ -18,6 +19,7 @@ export default function Campaigns() {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", subject: "" });
+  const [useAIAssistant, setUseAIAssistant] = useState(false);
 
   const handleCreate = async () => {
     if (!formData.name) {
@@ -104,11 +106,33 @@ export default function Campaigns() {
               New Campaign
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-card border-border">
+          <DialogContent className="bg-card border-border max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-foreground">Create New Campaign</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              {/* AI Assistant Toggle */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="useAI"
+                  checked={useAIAssistant}
+                  onChange={(e) => setUseAIAssistant(e.target.checked)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <label htmlFor="useAI" className="text-sm text-foreground cursor-pointer">
+                  Use AI Assistant to generate campaign details
+                </label>
+              </div>
+
+              {/* AI Assistant */}
+              {useAIAssistant && (
+                <AICampaignAssistant
+                  onNameSelected={(name) => setFormData({ ...formData, name })}
+                  onDescriptionSelected={(desc) => setFormData({ ...formData, subject: desc })}
+                />
+              )}
+              {/* Manual Input */}
               <div>
                 <Label className="text-foreground">Campaign Name</Label>
                 <Input
