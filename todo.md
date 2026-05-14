@@ -77,6 +77,14 @@
 - [x] Add loading states for generation
 - [x] Add error handling for LLM calls
 
+## Frontend - AI Features (NEW)
+- [x] AI Template Generation (by industry/purpose/tone/audience)
+- [x] AI Campaign Name Suggestions
+- [x] AI Campaign Description Generation
+- [x] Image Upload Block (file + URL input)
+- [x] Integrate AI components into Campaigns page
+- [x] Integrate AI components into Email Builder
+
 ## Frontend - Notifications
 - [ ] Implement owner notification display
 - [ ] Test campaign scheduled notifications
