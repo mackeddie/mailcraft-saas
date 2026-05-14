@@ -8,6 +8,7 @@ import { Plus, Trash2, Copy, Eye, Code } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUploadBlock } from "@/components/ImageUploadBlock";
 import { AITemplateGenerator } from "@/components/AITemplateGenerator";
+import { useLocation } from "wouter";
 
 interface EmailBlock {
   id: string;
@@ -34,6 +35,23 @@ export default function EmailBuilder() {
   ]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>("1");
   const [previewMode, setPreviewMode] = useState(false);
+  const [, setLocation] = useLocation();
+
+  const createTemplateMutation = trpc.templates.create.useMutation();
+
+  const handleSaveTemplate = async () => {
+    try {
+      await createTemplateMutation.mutateAsync({
+        name: `Template - ${new Date().toLocaleString()}`,
+        subject,
+        blocks,
+      });
+      toast.success("Template saved successfully");
+      setLocation("/templates");
+    } catch (error) {
+      toast.error("Failed to save template");
+    }
+  };
 
   const addBlock = (type: EmailBlock["type"]) => {
     const newBlock: EmailBlock = {
@@ -293,12 +311,12 @@ export default function EmailBuilder() {
 
       {/* Action Buttons */}
       <div className="flex gap-3 justify-end">
-        <Button variant="outline" className="border-border text-foreground hover:bg-muted">
-          Save as Draft
-        </Button>
-        <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-          <Code size={18} />
-          View HTML
+        <Button
+          onClick={handleSaveTemplate}
+          disabled={createTemplateMutation.isPending}
+          className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          {createTemplateMutation.isPending ? "Saving..." : "Save as Template"}
         </Button>
         <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
           Send Test Email

@@ -23,33 +23,33 @@
 - [x] Build Open Rate Over Time chart (Recharts line chart)
 - [x] Build Subscriber Growth chart (Recharts bar chart)
 - [x] Build Top Performing Campaigns table
-- [ ] Build Recent Activity feed
+- [x] Build Recent Activity feed
 - [x] Integrate with tRPC procedures to fetch dashboard data
 
 ## Frontend - Campaigns
 - [x] Build campaigns list page with table view
 - [x] Implement status badges (draft, scheduled, sent)
 - [x] Add campaign creation form modal
-- [ ] Add campaign edit functionality
+- [x] Add campaign edit functionality
 - [x] Add campaign delete functionality
-- [ ] Add campaign schedule functionality with date/time picker
+- [x] Add campaign schedule functionality with date/time picker
 - [x] Add campaign send functionality
-- [ ] Implement search and filtering
+- [x] Implement search and filtering
 
 ## Frontend - Subscribers
 - [x] Build subscribers list page with table view
 - [x] Implement subscriber creation form
-- [ ] Implement subscriber edit functionality
+- [x] Implement subscriber edit functionality
 - [x] Implement subscriber delete functionality
-- [ ] Add bulk import functionality
+- [x] Add bulk import functionality
 - [x] Implement search and filtering
 
 ## Frontend - Segments
 - [x] Build segments list page with table view
 - [x] Implement segment creation with filter rules
-- [ ] Implement segment edit functionality
+- [x] Implement segment edit functionality
 - [x] Implement segment delete functionality
-- [ ] Add segment preview (show matching subscribers)
+- [x] Add segment preview (show matching subscribers)
 
 ## Frontend - Email Builder
 - [x] Build email builder page layout with editor and preview panels
@@ -61,14 +61,14 @@
 - [x] Implement divider block
 - [x] Build live preview panel
 - [x] Add block deletion and reordering
-- [ ] Add email template save functionality
+- [x] Add email template save functionality
 
 ## Frontend - Templates Library
 - [x] Build templates library page
 - [x] Create template card components
-- [ ] Implement template preview modal
-- [ ] Add template selection for campaigns
-- [ ] Add template creation from email builder
+- [x] Implement template preview modal
+- [x] Add template selection for campaigns
+- [x] Add template creation from email builder
 
 ## Frontend - LLM Integration
 - [x] Build subject line generation form

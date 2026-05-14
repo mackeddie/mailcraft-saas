@@ -13,9 +13,12 @@ export default function Subscribers() {
   const { data: subscribers, isLoading, refetch } = trpc.subscribers.list.useQuery();
   const createMutation = trpc.subscribers.create.useMutation();
   const deleteMutation = trpc.subscribers.delete.useMutation();
+  const importMutation = trpc.subscribers.import.useMutation();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [formData, setFormData] = useState({ email: "", name: "" });
+  const [importData, setImportData] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleCreate = async () => {
@@ -34,6 +37,35 @@ export default function Subscribers() {
       toast.success("Subscriber added successfully");
     } catch (error) {
       toast.error("Failed to add subscriber");
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importData.trim()) {
+      toast.error("Please provide data to import");
+      return;
+    }
+
+    const lines = importData.split('\n').filter(l => l.trim());
+    const parsedSubscribers = lines.map(line => {
+      const [email, ...nameParts] = line.split(',').map(s => s.trim());
+      const name = nameParts.join(',').trim();
+      return { email, name: name || undefined, tags: [] };
+    }).filter(s => s.email && s.email.includes('@'));
+
+    if (parsedSubscribers.length === 0) {
+      toast.error("No valid subscribers found. Check your format.");
+      return;
+    }
+
+    try {
+      await importMutation.mutateAsync({ subscribers: parsedSubscribers });
+      setImportData("");
+      setIsImportOpen(false);
+      refetch();
+      toast.success(`Successfully imported ${parsedSubscribers.length} subscribers`);
+    } catch (error) {
+      toast.error("Failed to import subscribers");
     }
   };
 
@@ -92,47 +124,82 @@ export default function Subscribers() {
           <h1 className="text-3xl font-bold text-foreground">Subscribers</h1>
           <p className="text-muted-foreground mt-2">Manage your email list</p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-              <Plus size={18} />
-              Add Subscriber
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-card border-border">
-            <DialogHeader>
-              <DialogTitle className="text-foreground">Add Subscriber</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-foreground">Email Address</Label>
-                <Input
-                  type="email"
-                  placeholder="subscriber@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="mt-2 bg-input text-foreground border-border"
-                />
-              </div>
-              <div>
-                <Label className="text-foreground">Name (Optional)</Label>
-                <Input
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-2 bg-input text-foreground border-border"
-                />
-              </div>
-              <Button
-                onClick={handleCreate}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending ? "Adding..." : "Add Subscriber"}
+        <div className="flex gap-3">
+          <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary/10">
+                <Plus size={18} />
+                Bulk Import
               </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="bg-card border-border sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle className="text-foreground">Bulk Import Subscribers</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-foreground">Paste CSV Data (email, name)</Label>
+                  <textarea
+                    placeholder="john@example.com, John Doe&#10;jane@example.com, Jane Smith"
+                    value={importData}
+                    onChange={(e) => setImportData(e.target.value)}
+                    className="mt-2 w-full h-48 p-3 rounded-md bg-input text-foreground border border-border focus:ring-2 focus:ring-primary focus:outline-none resize-none font-mono text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">One subscriber per line. Format: email, name (optional)</p>
+                </div>
+                <Button
+                  onClick={handleImport}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  disabled={importMutation.isPending}
+                >
+                  {importMutation.isPending ? "Importing..." : `Import ${importData.split('\n').filter(l => l.trim()).length} Subscribers`}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Plus size={18} />
+                Add Subscriber
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-card border-border">
+              <DialogHeader>
+                <DialogTitle className="text-foreground">Add Subscriber</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-foreground">Email Address</Label>
+                  <Input
+                    type="email"
+                    placeholder="subscriber@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="mt-2 bg-input text-foreground border-border"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground">Name (Optional)</Label>
+                  <Input
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="mt-2 bg-input text-foreground border-border"
+                  />
+                </div>
+                <Button
+                  onClick={handleCreate}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  disabled={createMutation.isPending}
+                >
+                  {createMutation.isPending ? "Adding..." : "Add Subscriber"}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Search */}

@@ -18,8 +18,14 @@ export default function Campaigns() {
   const sendMutation = trpc.campaigns.send.useMutation();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", subject: "" });
+  const [scheduleData, setScheduleData] = useState({ segmentId: "", scheduledAt: "" });
   const [useAIAssistant, setUseAIAssistant] = useState(false);
+
+  const { data: segments } = trpc.segments.list.useQuery();
+  const scheduleMutation = trpc.campaigns.schedule.useMutation();
 
   const handleCreate = async () => {
     if (!formData.name) {
@@ -59,6 +65,26 @@ export default function Campaigns() {
       toast.success("Campaign sent successfully");
     } catch (error) {
       toast.error("Failed to send campaign");
+    }
+  };
+
+  const handleSchedule = async () => {
+    if (!selectedCampaignId || !scheduleData.segmentId || !scheduleData.scheduledAt) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      await scheduleMutation.mutateAsync({
+        id: selectedCampaignId,
+        segmentId: parseInt(scheduleData.segmentId),
+        scheduledAt: new Date(scheduleData.scheduledAt),
+      });
+      setIsScheduleOpen(false);
+      refetch();
+      toast.success("Campaign scheduled successfully");
+    } catch (error) {
+      toast.error("Failed to schedule campaign");
     }
   };
 
@@ -208,8 +234,8 @@ export default function Campaigns() {
                               variant="ghost"
                               className="text-primary hover:bg-primary/10"
                               onClick={() => {
-                                // Open schedule dialog
-                                toast("Scheduling coming soon");
+                                setSelectedCampaignId(campaign.id);
+                                setIsScheduleOpen(true);
                               }}
                             >
                               <Clock size={16} />
@@ -246,13 +272,56 @@ export default function Campaigns() {
         ) : (
           <div className="py-12 px-6 text-center">
             <p className="text-muted-foreground mb-4">No campaigns yet. Create your first campaign to get started.</p>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+              className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => setIsCreateOpen(true)}
+            >
               <Plus size={18} />
               Create Campaign
             </Button>
           </div>
         )}
       </Card>
+
+      {/* Schedule Dialog */}
+      <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Schedule Campaign</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-foreground">Select Segment</Label>
+              <select
+                value={scheduleData.segmentId}
+                onChange={(e) => setScheduleData({ ...scheduleData, segmentId: e.target.value })}
+                className="mt-2 w-full p-2 rounded-md bg-input text-foreground border border-border focus:ring-2 focus:ring-primary focus:outline-none"
+              >
+                <option value="">Select a segment...</option>
+                {segments?.map((segment: any) => (
+                  <option key={segment.id} value={segment.id}>{segment.name} ({segment.subscriberCount} subs)</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label className="text-foreground">Schedule Date & Time</Label>
+              <Input
+                type="datetime-local"
+                value={scheduleData.scheduledAt}
+                onChange={(e) => setScheduleData({ ...scheduleData, scheduledAt: e.target.value })}
+                className="mt-2 bg-input text-foreground border-border"
+              />
+            </div>
+            <Button
+              onClick={handleSchedule}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={scheduleMutation.isPending}
+            >
+              {scheduleMutation.isPending ? "Scheduling..." : "Schedule Campaign"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

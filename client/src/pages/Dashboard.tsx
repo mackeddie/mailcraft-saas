@@ -154,40 +154,71 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Top Performing Campaigns */}
-      <Card className="p-6 border border-border bg-card">
-        <h2 className="text-lg font-semibold text-foreground mb-6">Top Performing Campaigns</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Campaign</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Sent</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Open Rate</th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">Click Rate</th>
-              </tr>
-            </thead>
-            <tbody>
-              {metrics?.topCampaigns && metrics.topCampaigns.length > 0 ? (
-                metrics.topCampaigns.map((campaign: any) => (
-                  <tr key={campaign.id} className="border-b border-border hover:bg-muted transition-colors">
-                    <td className="py-3 px-4 text-foreground font-medium">{campaign.name}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{(campaign.sent as number).toLocaleString()}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{(typeof campaign.openRate === 'string' ? parseFloat(campaign.openRate) : campaign.openRate).toFixed(1)}%</td>
-                    <td className="py-3 px-4 text-muted-foreground">{(typeof campaign.clickRate === 'string' ? parseFloat(campaign.clickRate) : campaign.clickRate).toFixed(1)}%</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="py-8 px-4 text-center text-muted-foreground">
-                    No campaigns yet. Create your first campaign to see performance metrics.
-                  </td>
+      {/* Bottom Section: Top Campaigns and Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Top Performing Campaigns */}
+        <Card className="p-6 border border-border bg-card">
+          <h2 className="text-lg font-semibold text-foreground mb-6">Top Performing Campaigns</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Campaign</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Sent</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Open Rate</th>
+                  <th className="text-left py-3 px-4 font-semibold text-foreground">Click Rate</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+              </thead>
+              <tbody>
+                {metrics?.topCampaigns && metrics.topCampaigns.length > 0 ? (
+                  metrics.topCampaigns.map((campaign: any) => (
+                    <tr key={campaign.id} className="border-b border-border hover:bg-muted transition-colors">
+                      <td className="py-3 px-4 text-foreground font-medium">{campaign.name}</td>
+                      <td className="py-3 px-4 text-muted-foreground">{(campaign.sent as number).toLocaleString()}</td>
+                      <td className="py-3 px-4 text-muted-foreground">{(typeof campaign.openRate === 'string' ? parseFloat(campaign.openRate) : campaign.openRate).toFixed(1)}%</td>
+                      <td className="py-3 px-4 text-muted-foreground">{(typeof campaign.clickRate === 'string' ? parseFloat(campaign.clickRate) : campaign.clickRate).toFixed(1)}%</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-8 px-4 text-center text-muted-foreground">
+                      No campaigns yet. Create your first campaign to see performance metrics.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="p-6 border border-border bg-card">
+          <h2 className="text-lg font-semibold text-foreground mb-6">Recent Activity</h2>
+          <div className="space-y-6">
+            {metrics?.recentActivity && metrics.recentActivity.length > 0 ? (
+              metrics.recentActivity.map((activity: any) => (
+                <div key={activity.id} className="flex items-start gap-4">
+                  <div className={`p-2 rounded-full ${activity.type === 'open' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                    {activity.type === 'open' ? <Eye className="w-4 h-4" /> : <MousePointerClick className="w-4 h-4" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground">
+                      <span className="font-bold">{activity.subscriberEmail}</span> {activity.type === 'open' ? 'opened' : 'clicked'} <span className="font-bold">{activity.campaignName}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(activity.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center text-muted-foreground">
+                No recent activity.
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

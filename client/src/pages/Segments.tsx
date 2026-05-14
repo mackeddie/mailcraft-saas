@@ -15,7 +15,14 @@ export default function Segments() {
   const deleteMutation = trpc.segments.delete.useMutation();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedSegmentId, setSelectedSegmentId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "" });
+
+  const { data: previewData, isLoading: isPreviewLoading } = trpc.segments.getPreview.useQuery(
+    { id: selectedSegmentId || 0 },
+    { enabled: !!selectedSegmentId }
+  );
 
   const handleCreate = async () => {
     if (!formData.name) {
@@ -129,15 +136,28 @@ export default function Segments() {
                     <p className="text-sm text-muted-foreground">{segment.subscriberCount || 0} subscribers</p>
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive hover:bg-destructive/10"
-                  onClick={() => handleDelete(segment.id)}
-                  disabled={deleteMutation.isPending}
-                >
-                  <Trash2 size={16} />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-primary hover:bg-primary/10"
+                    onClick={() => {
+                      setSelectedSegmentId(segment.id);
+                      setIsPreviewOpen(true);
+                    }}
+                  >
+                    <Users size={16} />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive hover:bg-destructive/10"
+                    onClick={() => handleDelete(segment.id)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
               </div>
               {segment.description && (
                 <p className="text-sm text-muted-foreground mb-4">{segment.description}</p>
@@ -151,12 +171,49 @@ export default function Segments() {
       ) : (
         <Card className="py-12 px-6 text-center border-border bg-card">
           <p className="text-muted-foreground mb-4">No segments yet. Create your first segment to get started.</p>
-          <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button
+            className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => setIsCreateOpen(true)}
+          >
             <Plus size={18} />
             New Segment
           </Button>
         </Card>
       )}
+
+      {/* Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="bg-card border-border sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Segment Preview</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">Showing up to 10 matching subscribers:</p>
+            {isPreviewLoading ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))}
+              </div>
+            ) : previewData && previewData.length > 0 ? (
+              <div className="border border-border rounded-md overflow-hidden">
+                {previewData.map((sub: any) => (
+                  <div key={sub.id} className="p-3 border-b border-border last:border-0 hover:bg-muted/50 flex justify-between items-center">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{sub.email}</p>
+                      <p className="text-xs text-muted-foreground">{sub.name || "No name"}</p>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Active</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center py-8 text-muted-foreground italic">No matching subscribers found for this segment.</p>
+            )}
+            <Button onClick={() => setIsPreviewOpen(false)} className="w-full">Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
